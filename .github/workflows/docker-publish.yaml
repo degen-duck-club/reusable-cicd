@@ -15,9 +15,6 @@ on:
         required: false
         type: string
         default: ghcr.io
-    secrets:
-      github_token_name:
-        required: true
 
 jobs:
   build:
@@ -57,7 +54,7 @@ jobs:
         with:
           registry: ${{ inputs.container_registry_name }}
           username: ${{ github.actor }}
-          password: ${{ secrets.github_token_name }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
