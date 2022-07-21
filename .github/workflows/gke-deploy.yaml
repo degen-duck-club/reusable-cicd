@@ -58,4 +58,4 @@ jobs:
           export IMAGE_NAME=${{ inputs.container_registry_name }}/${{ inputs.image_name }}:${{ inputs.deployment_tag }}
           echo $IMAGE_NAME
           sed -Ei "s|IMAGE_PLACEHOLDER|$IMAGE_NAME|g" k8s/deployment.yaml
-          kubectl apply -f k8s/
+          kubectl apply -k k8s/
