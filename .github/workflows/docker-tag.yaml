@@ -1,0 +1,38 @@
+name: reusable-docker-tag
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        required: false
+        type: string
+      container_registry_name:
+        required: false
+        type: string
+        default: ghcr.io
+    outputs:
+      docker_tag:
+        value: ${{ jobs.docker_tag.outputs.docker_tag }}
+jobs:
+  docker_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Export Docker Tag (Short SHA)
+        id: sha
+        run: |-
+          echo "::set-output name=git_short_sha::sha-$(git rev-parse --short HEAD)"
+
+      - name: Echo Docker tag
+        run: |-
+          echo ${{ steps.sha.outputs.git_short_sha }}
+
+    outputs:
+      docker_tag: ${{ steps.sha.outputs.git_short_sha }}
