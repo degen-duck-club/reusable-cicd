@@ -45,6 +45,6 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: ${{ project_path }}
-          unityVersion: ${{ unity_version }}
-          targetPlatform: ${{ target_platform }}
+          projectPath: ${{ inputs.project_path }}
+          unityVersion: ${{ inputs.unity_version }}
+          targetPlatform: ${{ inputs.target_platform }}
