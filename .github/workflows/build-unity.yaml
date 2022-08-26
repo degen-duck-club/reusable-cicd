@@ -52,4 +52,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: duck_war_build
-          path: WebGL/
+          path: build
