@@ -8,6 +8,9 @@ name: reusable-unity-build
 on:
   workflow_call:
     inputs:
+      project_path:
+        required: true
+        type: string
       unity_version:
         required: false
         type: string
@@ -16,10 +19,6 @@ on:
         required: false
         type: string
         default: WebGL
-      project_path:
-        required: false
-        type: string
-        default: ./
     secrets:
       UNITY_LICENSE:
         required: true
