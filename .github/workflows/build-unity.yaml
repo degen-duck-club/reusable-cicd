@@ -48,3 +48,8 @@ jobs:
           projectPath: ${{ inputs.project_path }}
           unityVersion: ${{ inputs.unity_version }}
           targetPlatform: ${{ inputs.target_platform }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: duck_war_build
+          path: WebGL/
