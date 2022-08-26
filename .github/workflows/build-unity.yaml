@@ -8,15 +8,15 @@ name: reusable-unity-build
 on:
   workflow_call:
     inputs:
-      unityVersion:
+      unity_version:
         required: false
         type: string
         default: 2022.1.6f1
-      targetPlatform:
+      target_platform:
         required: false
         type: string
         default: WebGL
-      projectPath:
+      project_path:
         required: false
         type: string
         default: ./
@@ -46,6 +46,6 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: ${{ projectPath }}
-          unityVersion: ${{ unityVersion }}
-          targetPlatform: ${{ targetPlatform }}
+          projectPath: ${{ project_path }}
+          unityVersion: ${{ unity_version }}
+          targetPlatform: ${{ target_platform }}
