@@ -18,6 +18,7 @@ on:
       deployment_tag: # ${{ inputs.deployment_tag }}
         required: true
         type: string
+
 jobs:
   build:
     runs-on: ubuntu-latest
