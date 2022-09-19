@@ -18,6 +18,10 @@ on:
         required: false
         type: string
         default: ghcr.io
+      kube_overlay:
+        required: true
+        type: string
+        default: prod
     secrets:
       workload_identity_provider:
         required: true
@@ -31,8 +35,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ (github.ref_name == 'main' && github.event_name != 'pull_request') || (github.ref_name != 'main' && github.event_name != 'push' && github.event_name != 'pull_request') }}
+    # deploy to main
     steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -52,10 +59,27 @@ jobs:
           cluster_name: ${{ secrets.gke_cluster }}
           location: ${{ secrets.gke_region }}
 
-      # Deploy k8s objects to the GKE cluster
-      - name: Deploy to GKE
+      - name: Env report
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Git ref:    ${{ github.ref }}"
+          echo "GH actor:   ${{ github.actor }}"
+          echo "SHA:        ${{ github.sha }}"
+
+      # Deploy k8s objects to the GKE cluster main
+      - name: Deploy to GKE prod
+        if: ${{ (github.ref_name == 'main' && github.event_name != 'pull_request') || (github.ref_name != 'main' && github.event_name != 'push' && github.event_name != 'pull_request') }}
         run: |-
           export IMAGE_NAME=${{ inputs.container_registry_name }}/${{ inputs.image_name }}:${{ inputs.deployment_tag }}
           echo $IMAGE_NAME
-          sed -Ei "s|IMAGE_PLACEHOLDER|$IMAGE_NAME|g" k8s/deployment.yaml
-          kubectl apply -k k8s/
+          sed -Ei "s|IMAGE_PLACEHOLDER|$IMAGE_NAME|g" k8s/base/deployment.yaml
+          kubectl apply -k k8s/overlays/${{ inputs.kube_overlay }}
+
+      # Deploy k8s objects to the GKE cluster branch
+      - name: Deploy to GKE dev
+        if: ${{ (github.ref_name != 'main' && github.event_name != 'pull_request') || (github.ref_name != 'main' && github.event_name != 'push' && github.event_name != 'pull_request') }}
+        run: |-
+          export IMAGE_NAME=${{ inputs.container_registry_name }}/${{ inputs.image_name }}:${{ inputs.deployment_tag }}
+          echo $IMAGE_NAME
+          sed -Ei "s|IMAGE_PLACEHOLDER|$IMAGE_NAME|g" k8s/base/deployment.yaml
+          kubectl apply -k k8s/overlays/${{ inputs.kube_overlay }}
