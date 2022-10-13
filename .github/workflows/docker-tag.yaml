@@ -28,11 +28,9 @@ jobs:
       - name: Export Docker Tag (Short SHA)
         id: sha
         run: |-
-          echo "::set-output name=git_short_sha::sha-$(git rev-parse --short HEAD)"
-
+          echo "git_short_sha=sha-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Echo Docker tag
         run: |-
-          echo ${{ steps.sha.outputs.git_short_sha }}
-
+          echo "${{ env.git_short_sha }}"
     outputs:
-      docker_tag: ${{ steps.sha.outputs.git_short_sha }}
+      docker_tag: ${{ env.git_short_sha }}
